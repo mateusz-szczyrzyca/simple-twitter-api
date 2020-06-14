@@ -1,0 +1,57 @@
+---
+- hosts: database_public
+  gather_facts: yes
+ 
+  tasks:
+    - name: Ensure wget is installed
+      action: >
+        {{ ansible_pkg_mgr }} name=wget state=present update_cache=yes
+    
+    - name: Killing working instances (just in case)
+      shell: pkill -9 cockroach
+      ignore_errors: yes
+      tags:
+       - stop
+
+    - name: Removing previous things (just in case)
+      shell: rm -rf cockroach-data cockroach-v19.1.1.linux-amd64 first_node simple-twitter-api
+      ignore_errors: yes
+
+    - name: Downloading binaries
+      shell: wget -qO- https://binaries.cockroachdb.com/cockroach-v19.1.1.linux-amd64.tgz | tar  xvz
+
+    - name: Copying binary
+      shell: cp -f cockroach-v19.1.1.linux-amd64/cockroach /usr/local/bin
+
+    - name: Starting first node
+      shell: touch first_node && cockroach start --insecure --http-addr={{ inventory_hostname }}:50508 --listen-addr={{ private_ip }} &
+      run_once: yes
+      tags:
+        - configure
+
+    - pause:
+        seconds: 10
+
+    - name: Starting rest nodes
+      shell: "! test -f first_node && cockroach start --insecure --listen-addr={{ private_ip }} --http-addr={{ inventory_hostname }}:50508 --join={{ groups.database_private | difference([private_ip]) | first }} & " 
+      tags:
+        - configure
+
+    - pause:
+        seconds: 20
+
+    - name: Clone repository
+      shell: git clone https://github.com/mateusz-szczyrzyca/simple-twitter-api.git
+
+    - name: Import test database
+      shell: cockroach sql --host {{ private_ip }} --insecure < database/cockroachdb.sql
+      args:
+        chdir: simple-twitter-api/
+      run_once: yes
+      tags:
+        - import
+
+  
+
+    
+      

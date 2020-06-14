@@ -1,0 +1,29 @@
+---
+- hosts: app_public
+  gather_facts: yes
+ 
+  tasks:
+    - name: Ensure important apps are installed
+      action: >
+          {{ ansible_pkg_mgr }} name={{ item }} state=present update_cache=yes
+      with_items:
+          - git
+          - wget
+          - make
+          - screen
+
+    - name: Remove possible previous repo
+      shell: rm -rf simple-twitter-api
+
+    - name: Clone repository
+      shell: git clone https://github.com/mateusz-szczyrzyca/simple-twitter-api.git
+
+    - name: Prepare environment
+      shell: make environment
+      args:
+        chdir: simple-twitter-api/
+
+    - name: Running application in screen
+      shell: screen -Amsd bash make run dbdsn="postgresql://root@{{ groups.database_private | first }}:26257/twitter?sslmode=disable" endpoint="{{ inventory_hostname }}:58123"
+      args:
+        chdir: simple-twitter-api/
