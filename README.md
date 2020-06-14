@@ -10,13 +10,13 @@ API works (and api tests as well)
 ## Documentation
 Documentation is stored in `docs` directory.
 
-Application.md   - describes application, how it works, etc
+[Application.md](https://github.com/mateusz-szczyrzyca/simple-twitter-api/blob/master/docs/Application.md)   - describes application, how it works, etc
 
-Database.md      - describes database which is used here
+[Database.md](https://github.com/mateusz-szczyrzyca/simple-twitter-api/blob/master/docs/Database.md)      - describes database which is used here
 
-Installation.md  - describes deployment ways (local or non local). 
+[Installation.md](https://github.com/mateusz-szczyrzyca/simple-twitter-api/blob/master/docs/Installation.md)  - describes deployment ways (local or non local). 
                  Details of current working deploy are sent by email
 
-API.md           - API endpoints documentation
+[API.md](https://github.com/mateusz-szczyrzyca/simple-twitter-api/blob/master/docs/API.md)           - API endpoints documentation
 
-Security.md      - Important security information
+[Security.md](https://github.com/mateusz-szczyrzyca/simple-twitter-api/blob/master/docs/Security.md)      - Important security information
